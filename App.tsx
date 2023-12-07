@@ -3,16 +3,23 @@ import {
   SafeAreaView,
   Text,
   StyleSheet,
-  Button,
   Pressable, 
-  Modal
+  FlatList
 } from 'react-native';
 
 import Formulario from './src/components/Formulario';
+import Mascota from './src/components/Mascota';
 
 const App = () => {
 
 const [modalVisible, setModalVisible] = useState(false);
+const [mascotas, setMascotas] = useState([]);
+const [mascota, setMascota] = useState({});
+
+const mascotaEditar = id => {
+  const mascotaEditar = mascotas.filter(mascota => mascota.id === id)
+  setMascota(mascotaEditar[0])
+}
 
   return (
     <SafeAreaView style={styles.container}>
@@ -21,11 +28,33 @@ const [modalVisible, setModalVisible] = useState(false);
         <Text style={styles.tituloBold}>Veterinaria</Text>
       </Text>
 
-      <Pressable onPress={ () => setModalVisible(true)} style={styles.btnNuevaCita} >
+      <Pressable onPress={ () => setModalVisible(!modalVisible)} style={styles.btnNuevaCita} >
         <Text style={styles.btnTextNuevaCita}>Nueva Cita</Text>
       </Pressable>
 
-      <Formulario modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+      {mascotas.length === 0  ? 
+        <Text style={styles.noPacientes}>No hay pacientes</Text> : 
+        
+        <FlatList  
+          style={styles.listado}
+          data={mascotas} 
+          keyExtractor={ (item) => item.id } 
+          renderItem={ ({item}) => {
+            return( 
+              <Mascota item={item} modalVisible={modalVisible} setModalVisible={setModalVisible} mascotaEditar={mascotaEditar}/>
+            )
+          }} 
+        /> 
+      }
+
+      <Formulario 
+        modalVisible={modalVisible} 
+        setModalVisible={setModalVisible} 
+        mascotas={mascotas} 
+        setMascotas={setMascotas} 
+        mascota={mascota}
+        setMascota={setMascota}
+      />
 
     </SafeAreaView>
   );
@@ -59,6 +88,16 @@ const styles = StyleSheet.create({
     fontSize : 20,
     fontWeight : '900',
     textTransform : 'uppercase'
+  },
+  noPacientes : {
+    marginTop : 40,
+    textAlign : 'center',
+    fontSize : 24,
+    fontWeight : '600',
+  },
+  listado : {
+    marginTop : 50,
+    marginHorizontal : 30
   }
 })
 
