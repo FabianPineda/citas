@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import {Text, Modal, SafeAreaView, StyleSheet, TextInput, View, ScrollView} from 'react-native';
+import {Text, Modal, SafeAreaView, StyleSheet, TextInput, View, ScrollView, Pressable, TextComponent} from 'react-native';
+import DatePicker from 'react-native-date-picker';
 
 const Formulario = (props) => {
 
-  const {modalVisible} = props;
+  const {modalVisible, setModalVisible} = props;
 
   const [mascota, setMascota] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [fecha, setFecha] = useState(new Date());
   const [sintomas, setsintomas] = useState('');
 
   return (
@@ -19,64 +21,40 @@ const Formulario = (props) => {
             <Text>Cita</Text>
           </Text>
 
+          <Pressable style={styles.btnCancelar} onPress={ () => setModalVisible(false)}>
+            <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
+          </Pressable>
+
           <View style={styles.campo}>
             <Text style={styles.label}>Nombre Mascota</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder='Ingrese nombre Mascota' 
-                placeholderTextColor={'#666'} 
-                value={mascota}
-                onChangeText={setMascota}
-              ></TextInput>
+              <TextInput style={styles.input} placeholder='Ingrese nombre Mascota' placeholderTextColor={'#666'} value={mascota}onChangeText={setMascota}></TextInput>
           </View>
 
           <View style={styles.campo}>
             <Text style={styles.label}>Nombre Propietario</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder='Ingrese nombre propietario' 
-                placeholderTextColor={'#666'} 
-                value={propietario}
-                onChangeText={setPropietario}
-              ></TextInput>
+              <TextInput style={styles.input} placeholder='Ingrese nombre propietario' placeholderTextColor={'#666'} value={propietario}onChangeText={setPropietario}></TextInput>
           </View>
 
           <View style={styles.campo}>
             <Text style={styles.label}>Email Propietario</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder='Ingrese email propietario' 
-                placeholderTextColor={'#666'} 
-                value={email}
-                onChangeText={setEmail}
-                keyboardType='email-address'
-              ></TextInput>
+              <TextInput style={styles.input} placeholder='Ingrese email propietario' placeholderTextColor={'#666'} value={email}onChangeText={setEmail}keyboardType='email-address'></TextInput>
           </View>
 
           <View style={styles.campo}>
             <Text style={styles.label}>Teléfono Propietario</Text>
-              <TextInput 
-                style={styles.input} 
-                placeholder='Ingrese teléfono propietario' 
-                placeholderTextColor={'#666'} 
-                value={telefono}
-                onChangeText={setTelefono}
-                keyboardType='number-pad'
-                maxLength={12}
-              ></TextInput>
+              <TextInput style={styles.input} placeholder='Ingrese teléfono propietario' placeholderTextColor={'#666'} value={telefono}onChangeText={setTelefono}keyboardType='number-pad'maxLength={12}></TextInput>
+          </View>
+
+          <View style={styles.campo}>
+            <Text style={styles.label}>Fecha alta</Text>
+              <View style={styles.fechaContenedor}>
+                <DatePicker date={fecha} locale='es' onDateChange={(date) => setFecha(date)}/>
+              </View>
           </View>
 
           <View style={styles.campo}>
             <Text style={styles.label}>Síntomas Mascota</Text>
-              <TextInput 
-                style={[styles.input, styles.sintomasInput]} 
-                placeholder='Describa síntomas de su mascota' 
-                placeholderTextColor={'#666'}
-                multiline={true}
-                numberOfLines={4}
-                value={sintomas} 
-                onChangeText={setsintomas}
-              ></TextInput>
+              <TextInput style={[styles.input, styles.sintomasInput]} placeholder='Describa síntomas de su mascota' placeholderTextColor={'#666'}multiline={true}numberOfLines={4}value={sintomas} onChangeText={setsintomas}></TextInput>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -99,9 +77,25 @@ const styles = StyleSheet.create({
   tituloBold : {
     fontWeight : '900'
   },
+  btnCancelar : {
+    marginVertical : 30,
+    backgroundColor : '#5827A4',
+    marginHorizontal : 30,
+    padding : 15,
+    borderRadius : 10,
+    borderWidth : 1,
+    borderColor : '#FFF'
+  },
+  btnCancelarTexto : {
+    color : '#FFF',
+    textAlign : 'center',
+    fontWeight : '900',
+    fontSize : 20,
+    textTransform : 'uppercase'
+  },
   campo : {
     marginTop : 10,
-    marginHorizontal : 30,
+    marginHorizontal : 20,
   },
   label : {
     color : '#FFF',
@@ -117,6 +111,10 @@ const styles = StyleSheet.create({
   },
   sintomasInput : {
     height : 100
+  },
+  fechaContenedor : {
+    backgroundColor : '#FFF',
+    borderRadius : 10
   }
 })
 
