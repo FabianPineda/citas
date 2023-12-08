@@ -4,21 +4,43 @@ import {
   Text,
   StyleSheet,
   Pressable, 
-  FlatList
+  FlatList,
+  Alert,
+  Modal
 } from 'react-native';
 
 import Formulario from './src/components/Formulario';
 import Mascota from './src/components/Mascota';
+import InformacionMascota from './src/components/InformacionMascota';
 
 const App = () => {
 
 const [modalVisible, setModalVisible] = useState(false);
 const [mascotas, setMascotas] = useState([]);
 const [mascota, setMascota] = useState({});
+const [modalMascota, setModalMascota] = useState(false)
 
 const mascotaEditar = id => {
   const mascotaEditar = mascotas.filter(mascota => mascota.id === id)
   setMascota(mascotaEditar[0])
+}
+
+const mascotaEliminar = id => {
+  Alert.alert(
+    '¿Desea Eliminar esta mascota?',
+    'La mascota eliminada no se podrá recuperar',
+    [
+      {text : 'Cancelar'},
+      {text : 'Eliminar', onPress : () => {
+        const mascotasActualizados = mascotas.filter( mascotasState => mascotasState.id !== id)
+        setMascotas(mascotasActualizados)
+      }}
+    ]
+  )
+}
+
+const cerrarModal = () => {
+  setModalVisible(false)
 }
 
   return (
@@ -41,20 +63,34 @@ const mascotaEditar = id => {
           keyExtractor={ (item) => item.id } 
           renderItem={ ({item}) => {
             return( 
-              <Mascota item={item} modalVisible={modalVisible} setModalVisible={setModalVisible} mascotaEditar={mascotaEditar}/>
+              <Mascota
+                item={item}
+                modalVisible={modalVisible}
+                setMascota={setMascota}
+                setModalVisible={setModalVisible} 
+                mascotaEditar={mascotaEditar} 
+                mascotaEliminar={mascotaEliminar}
+                setModalMascota={setModalMascota}
+              />
             )
-          }} 
+          }}
         /> 
       }
 
-      <Formulario 
-        modalVisible={modalVisible} 
-        setModalVisible={setModalVisible} 
-        mascotas={mascotas} 
-        setMascotas={setMascotas} 
-        mascota={mascota}
-        setMascota={setMascota}
-      />
+      {modalVisible && (
+        <Formulario 
+          modalVisible={modalVisible} 
+          cerrarModal={cerrarModal}
+          mascotas={mascotas} 
+          setMascotas={setMascotas} 
+          mascota={mascota}
+          setMascota={setMascota}
+        />
+      )}
+  
+      <Modal animationType='slide' visible={modalMascota}>
+        <InformacionMascota mascota={mascota} modalMascota={modalMascota} setModalMascota={setModalMascota} setMascota={setMascota}/>
+      </Modal>
 
     </SafeAreaView>
   );

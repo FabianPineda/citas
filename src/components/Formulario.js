@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import {Text, Modal, SafeAreaView, StyleSheet, TextInput, View, ScrollView, Pressable, Alert} from 'react-native';
 import DatePicker from 'react-native-date-picker';
 
-const Formulario = (props) => {
-
-  // se obtienen los props
-  const {modalVisible, setModalVisible, mascotas, setMascotas, mascota : mascotaObj, setMascota : setMascotaApp} = props;
+const Formulario = ({
+  modalVisible, 
+  cerrarModal,
+  mascotas, 
+  setMascotas, 
+  mascota : mascotaObj, 
+  setMascota : setMascotaApp
+}) => {
 
   // de incializan los valores
-  const [mascota, setMascota] = useState('');
   const [id, setId] = useState('');
+  const [mascota, setMascota] = useState('');
   const [propietario, setPropietario] = useState('');
   const [email, setEmail] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -18,15 +22,15 @@ const Formulario = (props) => {
 
   useEffect(() => {
     if (Object.keys(mascotaObj).length > 0) {
+      setId(mascotaObj.id)
       setMascota(mascotaObj.mascota)
-      setMascota(mascotaObj.id)
       setPropietario(mascotaObj.propietario)
       setEmail(mascotaObj.email)
       setTelefono(mascotaObj.telefono)
       setFecha(mascotaObj.fecha)
       setSintomas(mascotaObj.sintomas)
     }
-  }, [])
+  }, [mascotaObj])
 
   // Accion para le boton al agregar una cita
   const handleCita = () => {
@@ -55,15 +59,15 @@ const Formulario = (props) => {
       setMascotaApp({})
 
     } else {
-      // crea copia del array y permite agregar mas datos al array
-      setMascotas([...mascotas, nuevaMascota]);
-
       //nuevo registro
       nuevaMascota.id = Date.now()
+      
+      // crea copia del array y permite agregar mas datos al array
+      setMascotas([...mascotas, nuevaMascota]);
     }
     
     //oculta el modal
-    setModalVisible(!modalVisible);
+    cerrarModal()
 
     // Se Limpian los campos
     setId('')
@@ -80,12 +84,12 @@ const Formulario = (props) => {
     <Modal animationType='slide' visible={modalVisible}>
       <SafeAreaView style={styles.contenido}>
         <ScrollView>
-          <Text style={styles.titulo}>Nueva {''}
+          <Text style={styles.titulo}> {mascotaObj.id ? 'Editar' : 'Nueva'} {''}
             <Text>Cita</Text>
           </Text>
 
           <Pressable style={styles.btnCancelar} onLongPress={ () => {
-              setModalVisible(!modalVisible)
+              cerrarModal()
               setMascotaApp({})
               setId('')
               setMascota('')
@@ -131,7 +135,7 @@ const Formulario = (props) => {
           </View>
 
           <Pressable style={styles.btnNuevaCita}>
-            <Text style={styles.btnCancelarTexto} onPress={handleCita} >Agregar Mascota</Text>
+            <Text style={styles.btnCancelarTexto} onPress={handleCita} >{mascotaObj.id ? 'Modificar' : 'Agregar'} Mascota</Text>
           </Pressable>
 
         </ScrollView>
